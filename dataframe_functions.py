@@ -153,3 +153,48 @@ def fill_missing_values_categorical_columns(df):
     
     return df
 
+def advanced_analytics(df):
+    st.write("### Advanced Analytics")
+    st.write("Group your data and compute aggregations.")
+
+    # Select column to group by
+    groupby_col = st.selectbox("Select a column to group by", df.select_dtypes(exclude=np.number).columns)
+
+    # Select columns to aggregate
+    agg_cols = st.multiselect(
+        "Select columns to aggregate (numeric columns recommended for most functions)", 
+        [col for col in df.columns if col != groupby_col]
+    )
+
+    # Select aggregation functions
+    agg_functions = st.multiselect(
+        "Select aggregation functions", 
+        ["mean", "sum", "min", "max", "count", "std", "median"],
+        default=["mean"]
+    )
+
+    if agg_cols and agg_functions:
+        try:
+            # Map friendly names to Pandas/NumPy functions
+            agg_func_map = {
+                "mean": np.mean,
+                "sum": np.sum,
+                "min": np.min,
+                "max": np.max,
+                "count": "count",  # Pandas built-in
+                "std": np.std,
+                "median": np.median
+            }
+            
+            # Perform groupby and aggregation
+            grouped_df = df.groupby(groupby_col)[agg_cols].agg([agg_func_map[func] for func in agg_functions]).reset_index()
+            
+            # Flatten column names for better readability
+            grouped_df.columns = ['_'.join(col).strip() if col[1] else col[0] for col in grouped_df.columns.values]
+            
+            st.write("#### Grouped Data Table")
+            st.dataframe(grouped_df)
+        except Exception as e:
+            st.error(f"Error performing aggregation: {str(e)}")
+    else:
+        st.write("Please select at least one column to aggregate and one aggregation function.")

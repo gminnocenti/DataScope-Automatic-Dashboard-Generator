@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
-from dataframe_functions import fill_missing_values_numeric_columns,fill_missing_values_categorical_columns
+from dataframe_functions import fill_missing_values_numeric_columns,fill_missing_values_categorical_columns,advanced_analytics
 st.title("Data Science Dashboard Generator")
 st.write("Upload a CSV or Excel file to generate an interactive dashboard!")
 
@@ -49,7 +49,7 @@ if uploaded_file is not None:
     
     df = fill_missing_values_categorical_columns(df)
     
-
+    advanced_analytics(df)
     
 
     generate_dashboard(df)
